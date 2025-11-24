@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="product_view" name="Single Product View">
+      <h1>Hello World</h1>
+    </template>
+</odoo>
