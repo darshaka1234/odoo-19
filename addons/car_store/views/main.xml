@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="main" name="CSR Inventory Page">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container oe_structure pt32 pb32">
+                    <h1 class="text-center">CSR Car Inventory (OWL/TypeScript)</h1>
+
+                    <div id="owl_inventory_root"/>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
