@@ -7,15 +7,10 @@
     'depends': ['base', 'website', 'website_sale'],
     'description': "Custom Product Page",
     'data': [
-        'views/inventory.xml',
-        'views/product.xml',
         'views/ssr_inventory.xml',
         'views/ssr_product.xml',
         'views/payment_view.xml'
     ],
-    'assets': {
-        'web.assets_frontend': [],
-    },
     'sequence': 20,
     'application': True,
     'auto_install': False,
