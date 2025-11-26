@@ -1,21 +1,20 @@
 {
     'name': 'Car Store',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'license': 'LGPL-3',
     'author': 'darshaka',
     'category': 'Website',
-    'depends': ['base','website'],
-    'description': "First web page",
+    'depends': ['base', 'website', 'website_sale'],
+    'description': "Custom Product Page",
     'data': [
-        'views/main.xml',
-        'views/hello_world.xml',
         'views/inventory.xml',
+        'views/product.xml',
+        'views/ssr_inventory.xml',
+        'views/ssr_product.xml',
+        'views/payment_view.xml'
     ],
     'assets': {
-        'web.assets_frontend': [
-            'car_store/static/src/js/main.js',
-            'car_store/static/src/js/components/product_inventory.js',
-        ],
+        'web.assets_frontend': [],
     },
     'sequence': 20,
     'application': True,

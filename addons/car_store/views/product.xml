@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="main" name="CSR Inventory Page">
+    <template id="product" name="Product Page">
+
+        <input type="hidden" id="product_id_input" t-att-value="product_id"/>
+
         <t t-call="website.layout">
             <div id="wrap">
                 <div class="container oe_structure pt32 pb32">
-                    <h1 class="text-center">CSR Car Inventory (OWL/TypeScript)</h1>
-
-                    <div id="owl_inventory_root"/>
+                    <div id="product_root"/>
                 </div>
             </div>
         </t>

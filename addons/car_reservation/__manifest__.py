@@ -10,7 +10,6 @@
     'data': [
         'security/ir.model.access.csv',
         'views/reservation_sequence.xml',
-        'views/reserve_now_btn.xml'
     ],
     'assets': {
         'web.assets_frontend': [

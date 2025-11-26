@@ -1,3 +1,5 @@
-from . import main
-from . import inventory
-from . import client_inventory
+# from . import page_controller
+from . import product_controller
+from . import inventory_ssr
+from . import reservation_controller
+from . import payment_controller

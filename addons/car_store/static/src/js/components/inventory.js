@@ -5,7 +5,6 @@ import { rpc } from "@web/core/network/rpc";
 
 export class ProductInventory extends Component {
 
-    // Define the component's structure
 static template = xml/*xml*/`
         <div class="o_owl_inventory mt-4">
             <t t-if="state.isLoading">
@@ -17,24 +16,28 @@ static template = xml/*xml*/`
             
             <t t-else="">
                 <div class="row">
-                    <t t-foreach="state.cars" t-as="car" t-key="car['id']">
+                    <t t-foreach="state.products" t-as="product" t-key="product['id']">
                         <div class="col-lg-4 col-md-6 mb-4">
                             <div class="card h-100 shadow-sm">
+                            
+                                <div t-if="product.is_sold_out" class="card-status-badge sold-out">Sold Out</div>
+                                <div t-else="" class="card-status-badge available">Available</div>
+                                
                                 <img 
-                                    t-attf-src="/web/image?model=product.template&amp;id={{car['id']}}&amp;field=image_256"
+                                    t-attf-src="/web/image?model=product.template&amp;id={{product['id']}}&amp;field=image_256"
                                     class="card-img-top img-fluid" 
-                                    t-att-alt="car.name"
+                                    t-att-alt="product['name']"
                                 />
                                 <div class="card-body">
-                                    <h5 class="card-title text-primary" t-esc="car['name']"/>
+                                    <h5 class="card-title text-primary" t-esc="product['name']"/>
                                     <p class="card-text text-success lead">
-                                        Price: <span t-esc="this.formatPrice(car['list_price'], '$')"/>
+                                        Price: <span t-esc="this.formatPrice(product['list_price'], '$')"/>
                                     </p>
                                     <div class="text-muted small">
-                                        <t t-esc="car.description_sale or 'No description provided.'"/>
+                                        <t t-esc="product['description_sale'] or 'No description provided.'"/>
                                     </div>
-                                    <button class="btn btn-outline-primary btn-sm mt-3" t-on-click="() => this.addToCart(car['id'])">
-                                        Add to Cart
+                                    <button class="btn btn-outline-primary btn-sm mt-3" t-on-click="() => this.handleViewDetails(product['id'])">
+                                        View Details
                                     </button>
                                 </div>
                             </div>
@@ -47,7 +50,7 @@ static template = xml/*xml*/`
     // State initialization (no more interface needed)
     setup() {
         this.state = useState({
-            cars: [],
+            products: [],
             isLoading: true,
             error: null,
         });
@@ -57,10 +60,8 @@ static template = xml/*xml*/`
     async fetchProducts() {
         try {
             this.state.isLoading = true;
-            // The JSON RPC call remains the same
             const data = await rpc("/api/products");
-            console.log(data)
-            this.state.cars = data;
+            this.state.products = data;
         } catch (e) {
             console.error("Failed to load products:", e);
             this.state.error = "Could not load product data.";
@@ -73,7 +74,8 @@ static template = xml/*xml*/`
         return `${currencySymbol} ${price.toFixed(2)}`;
     }
 
-    addToCart(productId) {
-        console.log(`Product ID ${productId} added to cart!`);
+    handleViewDetails(productId) {
+        const targetUrl = `/inventory/${productId}`;
+        window.location.href = targetUrl;
     }
 }
