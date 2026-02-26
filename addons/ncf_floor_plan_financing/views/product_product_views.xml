@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Product Form View: Add Floor Plan Tab -->
+        <record id="view_product_form_floor_plan" model="ir.ui.view">
+            <field name="name">product.product.form.floor.plan</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Floor Plan" attrs="{'invisible': [('is_floor_plan_vehicle', '=', False)]}">
+                        <group>
+                            <group string="Floor Plan Settings">
+                                <field name="is_floor_plan_vehicle"/>
+                                <field name="vin" attrs="{'required': [('is_floor_plan_vehicle', '=', True)], 'readonly': [('floor_plan_lines_count', '>', 0)]}"/>
+                                <field name="floor_plan_dealer_id"/>
+                            </group>
+                            <group string="Floor Plan Status">
+                                <field name="floor_plan_state"/>
+                                <field name="total_funding_amount" widget="monetary"/>
+                                <field name="remaining_to_fund" widget="monetary"/>
+                                <field name="floor_plan_lines_count"/>
+                            </group>
+                        </group>
+                        
+                        <group string="Funding Lines">
+                            <field name="floor_plan_agreement_line_ids" readonly="1">
+                                <tree>
+                                    <field name="agreement_id"/>
+                                    <field name="investor_id"/>
+                                    <field name="dealer_id"/>
+                                    <field name="funded_amount" widget="monetary"/>
+                                    <field name="principal_remaining" widget="monetary"/>
+                                    <field name="state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Product Tree View: Add Floor Plan Columns -->
+        <record id="view_product_tree_floor_plan" model="ir.ui.view">
+            <field name="name">product.product.tree.floor.plan</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_product_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="is_floor_plan_vehicle" optional="hide"/>
+                    <field name="vin" optional="show"/>
+                    <field name="floor_plan_state" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Add Smart Button to Product Form -->
+        <record id="view_product_form_floor_plan_button" model="ir.ui.view">
+            <field name="name">product.product.form.floor.plan.button</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="action_view_floor_plan_lines" 
+                            type="object" 
+                            class="oe_stat_button" 
+                            icon="fa-list"
+                            attrs="{'invisible': [('is_floor_plan_vehicle', '=', False)]}">
+                        <field name="floor_plan_lines_count" widget="statinfo" string="Floor Plan Lines"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Vehicle Action (Floor Plan Vehicles Only) -->
+        <record id="action_floor_plan_vehicles" model="ir.actions.act_window">
+            <field name="name">Vehicles</field>
+            <field name="res_model">product.product</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_floor_plan_vehicle', '=', True)]</field>
+            <field name="context">{'default_is_floor_plan_vehicle': True, 'default_type': 'product'}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first vehicle
+                </p>
+                <p>
+                    Register vehicles with VIN numbers to track floor plan financing.
+                    Each vehicle can have multiple funding lines from different investors.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

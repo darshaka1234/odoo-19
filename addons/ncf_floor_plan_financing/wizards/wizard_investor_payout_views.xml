@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Investor Payout Line Tree -->
+        <record id="view_wizard_investor_payout_line_tree" model="ir.ui.view">
+            <field name="name">wizard.investor.payout.line.tree</field>
+            <field name="model">wizard.investor.payout.line</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="investor_id" readonly="1"/>
+                    <field name="available_amount" widget="monetary" readonly="1"/>
+                    <field name="payout_amount" widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Investor Payout Wizard Form -->
+        <record id="view_wizard_investor_payout_form" model="ir.ui.view">
+            <field name="name">wizard.investor.payout.form</field>
+            <field name="model">wizard.investor.payout</field>
+            <field name="arch" type="xml">
+                <form string="Investor Interest Payout">
+                    <group>
+                        <group>
+                            <field name="total_payout" widget="monetary" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Pending Payouts">
+                        <field name="line_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="investor_id" readonly="1"/>
+                                <field name="available_amount" widget="monetary" readonly="1" sum="Total Available"/>
+                                <field name="payout_amount" widget="monetary" sum="Total Payout"/>
+                                <field name="currency_id" invisible="1"/>
+                            </tree>
+                        </field>
+                    </group>
+                    
+                    <footer>
+                        <button name="action_process_payouts" string="Process Payouts" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Investor Payout Action -->
+        <record id="action_wizard_investor_payout" model="ir.actions.act_window">
+            <field name="name">Investor Interest Payout</field>
+            <field name="res_model">wizard.investor.payout</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        
+        <!-- Menu Item for Investor Payout -->
+        <menuitem id="menu_wizard_investor_payout"
+                  name="Process Investor Payouts"
+                  parent="menu_floor_plan_operations"
+                  action="action_wizard_investor_payout"
+                  sequence="10"
+                  groups="group_floor_plan_admin"/>
+        
+    </data>
+</odoo>

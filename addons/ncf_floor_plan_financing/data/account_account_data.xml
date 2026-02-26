@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- ================================================ -->
+        <!-- ASSET ACCOUNTS -->
+        <!-- ================================================ -->
+        
+        <!-- Platform Bank Asset Account -->
+        <record id="account_platform_bank_asset" model="account.account">
+            <field name="code">1010</field>
+            <field name="name">Platform Bank Asset</field>
+            <field name="account_type">asset_cash</field>
+            <field name="reconcile">True</field>
+        </record>
+        
+        <!-- Client Funds Bank Asset Account -->
+        <record id="account_client_funds_bank_asset" model="account.account">
+            <field name="code">1020</field>
+            <field name="name">Client Funds Bank Asset</field>
+            <field name="account_type">asset_cash</field>
+            <field name="reconcile">True</field>
+        </record>
+        
+        <!-- Dealer Loan Receivable Asset Account -->
+        <record id="account_dealer_loan_receivable" model="account.account">
+            <field name="code">1210</field>
+            <field name="name">Dealer Loan Receivable Asset</field>
+            <field name="account_type">asset_receivable</field>
+            <field name="reconcile">True</field>
+        </record>
+        
+        <!-- Dealer Interest Receivable Asset Account -->
+        <record id="account_dealer_interest_receivable" model="account.account">
+            <field name="code">1220</field>
+            <field name="name">Dealer Interest Receivable Asset</field>
+            <field name="account_type">asset_current</field>
+            <field name="reconcile">True</field>
+        </record>
+        
+        <!-- ================================================ -->
+        <!-- LIABILITY ACCOUNTS -->
+        <!-- ================================================ -->
+        
+        <!-- Investor Payable Liability Account -->
+        <record id="account_investor_payable" model="account.account">
+            <field name="code">2110</field>
+            <field name="name">Investor Payable Liability</field>
+            <field name="account_type">liability_payable</field>
+            <field name="reconcile">True</field>
+        </record>
+        
+        <!-- Investor Interest Payable Liability Account -->
+        <record id="account_investor_interest_payable" model="account.account">
+            <field name="code">2120</field>
+            <field name="name">Investor Interest Payable Liability</field>
+            <field name="account_type">liability_current</field>
+            <field name="reconcile">True</field>
+        </record>
+        
+        <!-- ================================================ -->
+        <!-- INCOME ACCOUNTS -->
+        <!-- ================================================ -->
+        
+        <!-- Commission Income Account -->
+        <record id="account_commission_income" model="account.account">
+            <field name="code">4500</field>
+            <field name="name">Commission Income</field>
+            <field name="account_type">income</field>
+            <field name="reconcile">False</field>
+        </record>
+        
+        <!-- ================================================ -->
+        <!-- JOURNAL -->
+        <!-- ================================================ -->
+        
+        <!-- Floor Plan Financing Journal -->
+        <record id="journal_floor_plan_financing" model="account.journal">
+            <field name="name">Floor Plan Financing</field>
+            <field name="code">FPF</field>
+            <field name="type">general</field>
+            <field name="show_on_dashboard" eval="True"/>
+        </record>
+        
+    </data>
+</odoo>

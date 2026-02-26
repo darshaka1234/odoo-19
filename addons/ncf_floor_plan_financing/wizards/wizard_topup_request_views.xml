@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Top-up Request Wizard Form -->
+        <record id="view_wizard_topup_request_form" model="ir.ui.view">
+            <field name="name">wizard.topup.request.form</field>
+            <field name="model">wizard.topup.request</field>
+            <field name="arch" type="xml">
+                <form string="Request Top-up Funding">
+                    <group>
+                        <group string="Original Funding Line">
+                            <field name="agreement_line_id" readonly="1"/>
+                            <field name="vehicle_id" readonly="1"/>
+                            <field name="vin" readonly="1"/>
+                            <field name="dealer_id" readonly="1"/>
+                            <field name="investor_id" readonly="1"/>
+                        </group>
+                        <group string="Current Details">
+                            <field name="current_funded_amount" widget="monetary" readonly="1"/>
+                            <field name="current_interest_rate" widget="percentage" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group string="Top-up Request">
+                            <field name="topup_amount" widget="monetary"/>
+                            <field name="use_same_rate"/>
+                            <field name="new_interest_rate" widget="percentage" attrs="{'invisible': [('use_same_rate', '=', True)], 'required': [('use_same_rate', '=', False)]}"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <field name="reason" placeholder="Provide reason for top-up request..."/>
+                    </group>
+                    
+                    <footer>
+                        <button name="action_create_topup" string="Create Top-up Line" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Top-up Request Action -->
+        <record id="action_wizard_topup_request" model="ir.actions.act_window">
+            <field name="name">Request Top-up</field>
+            <field name="res_model">wizard.topup.request</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_floor_plan_agreement_line"/>
+            <field name="binding_view_types">form</field>
+        </record>
+        
+    </data>
+</odoo>

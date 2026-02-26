@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Agreement Line Tree View -->
+        <record id="view_floor_plan_agreement_line_tree" model="ir.ui.view">
+            <field name="name">floor.plan.agreement.line.tree</field>
+            <field name="model">floor.plan.agreement.line</field>
+            <field name="arch" type="xml">
+                <tree string="Funding Lines" decoration-info="state=='draft'" decoration-success="state=='funded'" decoration-warning="state=='partial'" decoration-muted="state=='paid_off'">
+                    <field name="agreement_id"/>
+                    <field name="investor_id"/>
+                    <field name="vehicle_id"/>
+                    <field name="vin"/>
+                    <field name="dealer_id"/>
+                    <field name="funded_amount" widget="monetary" sum="Total Funded"/>
+                    <field name="principal_remaining" widget="monetary" sum="Total Outstanding"/>
+                    <field name="interest_rate"/>
+                    <field name="interest_earned" widget="monetary" sum="Total Interest Earned"/>
+                    <field name="interest_outstanding" widget="monetary" sum="Outstanding Interest"/>
+                    <field name="state" widget="badge" decoration-info="state=='draft'" decoration-success="state=='funded'" decoration-warning="state=='partial'"/>
+                    <field name="start_date"/>
+                    <field name="currency_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Agreement Line Form View -->
+        <record id="view_floor_plan_agreement_line_form" model="ir.ui.view">
+            <field name="name">floor.plan.agreement.line.form</field>
+            <field name="model">floor.plan.agreement.line</field>
+            <field name="arch" type="xml">
+                <form string="Funding Line">
+                    <header>
+                        <!-- State Transition Buttons -->
+                        <button name="action_submit" string="Submit" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <button name="action_approve" string="Approve" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'pending')]}" groups="ncf_floor_plan_financing.group_floor_plan_manager,ncf_floor_plan_financing.group_floor_plan_admin"/>
+                        <button name="action_fund" string="Fund Vehicle" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'approved')]}" groups="ncf_floor_plan_financing.group_floor_plan_admin"/>
+                        <button name="action_cancel" string="Cancel" type="object" attrs="{'invisible': [('state', 'in', ['funded', 'partial', 'paid_off'])]}"/>
+                        
+                        <!-- Operational Buttons -->
+                        <button name="action_transfer_to_dealer" string="Transfer to Dealer" type="object" class="btn-primary" attrs="{'invisible': [('state', 'not in', ['funded', 'partial'])]}" groups="ncf_floor_plan_financing.group_floor_plan_admin"/>
+                        
+                        <field name="state" widget="statusbar" statusbar_visible="draft,pending,approved,funded,paid_off"/>
+                    </header>
+                    
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_transactions" type="object" class="oe_stat_button" icon="fa-exchange">
+                                <field name="transactions_count" widget="statinfo" string="Transactions"/>
+                            </button>
+                        </div>
+                        
+                        <div class="oe_title">
+                            <h1>
+                                <field name="display_name" readonly="1"/>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group string="Agreement">
+                                <field name="agreement_id" options="{'no_create': True}"/>
+                                <field name="investor_id"/>
+                            </group>
+                            <group string="Dates">
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <field name="last_interest_calc_date"/>
+                            </group>
+                        </group>
+                        
+                        <group>
+                            <group string="Vehicle Details">
+                                <field name="vehicle_id" options="{'no_create': True}"/>
+                                <field name="vin"/>
+                                <field name="dealer_id" options="{'no_create': True}"/>
+                            </group>
+                            <group string="Funding Details">
+                                <field name="funded_amount" widget="monetary"/>
+                                <field name="topup_amount" widget="monetary" attrs="{'invisible': [('topup_amount', '=', 0)]}"/>
+                                <field name="repaid_amount" widget="monetary"/>
+                                <field name="principal_remaining" widget="monetary" class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </group>
+                        
+                        <group>
+                            <group string="Interest">
+                                <field name="interest_rate" widget="percentage"/>
+                                <field name="commission_rate" widget="percentage"/>
+                                <field name="interest_earned" widget="monetary"/>
+                                <field name="interest_paid" widget="monetary"/>
+                                <field name="interest_outstanding" widget="monetary" class="oe_subtotal_footer_separator"/>
+                            </group>
+                            <group>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Transactions">
+                                <field name="transaction_ids" readonly="1">
+                                    <tree decoration-success="state=='posted'">
+                                        <field name="name"/>
+                                        <field name="transaction_date"/>
+                                        <field name="transaction_type"/>
+                                        <field name="amount" widget="monetary" sum="Total"/>
+                                        <field name="state" widget="badge"/>
+                                        <button name="action_view_journal_entry" string="View Entry" type="object" icon="fa-book" attrs="{'invisible': [('move_id', '=', False)]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            
+                            <page string="Notes">
+                                <field name="notes" placeholder="Additional notes or comments..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Agreement Line Kanban View -->
+        <record id="view_floor_plan_agreement_line_kanban" model="ir.ui.view">
+            <field name="name">floor.plan.agreement.line.kanban</field>
+            <field name="model">floor.plan.agreement.line</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" default_group_by="state">
+                    <field name="vehicle_id"/>
+                    <field name="vin"/>
+                    <field name="dealer_id"/>
+                    <field name="funded_amount"/>
+                    <field name="principal_remaining"/>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="row mb4">
+                                    <div class="col-8">
+                                        <strong><field name="vehicle_id"/></strong>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <field name="state" widget="badge"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <i class="fa fa-barcode"/> <field name="vin"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <i class="fa fa-user"/> <field name="dealer_id"/>
+                                    </div>
+                                </div>
+                                <div class="row mt4">
+                                    <div class="col-6">
+                                        <strong>Funded:</strong> <field name="funded_amount" widget="monetary"/>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Outstanding:</strong> <field name="principal_remaining" widget="monetary"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        
+        <!-- Agreement Line Search View -->
+        <record id="view_floor_plan_agreement_line_search" model="ir.ui.view">
+            <field name="name">floor.plan.agreement.line.search</field>
+            <field name="model">floor.plan.agreement.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Funding Lines">
+                    <field name="agreement_id"/>
+                    <field name="investor_id"/>
+                    <field name="vehicle_id"/>
+                    <field name="vin"/>
+                    <field name="dealer_id"/>
+                    
+                    <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Pending Approval" name="pending" domain="[('state', '=', 'pending')]"/>
+                    <filter string="Funded" name="funded" domain="[('state', 'in', ['funded', 'partial'])]"/>
+                    <filter string="Paid Off" name="paid_off" domain="[('state', '=', 'paid_off')]"/>
+                    
+                    <separator/>
+                    <filter string="Has Outstanding Interest" name="has_outstanding_interest" domain="[('interest_outstanding', '&gt;', 0)]"/>
+                    <filter string="Has Outstanding Principal" name="has_outstanding_principal" domain="[('principal_remaining', '&gt;', 0)]"/>
+                    
+                    <separator/>
+                    <filter string="This Month" name="this_month" 
+                            domain="[('start_date', '&gt;=', (context_today() - relativedelta(day=1)).strftime('%Y-%m-%d')), ('start_date', '&lt;=', (context_today() + relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    
+                    <group expand="0" string="Group By">
+                        <filter string="Agreement" name="group_agreement" context="{'group_by': 'agreement_id'}"/>
+                        <filter string="Investor" name="group_investor" context="{'group_by': 'investor_id'}"/>
+                        <filter string="Dealer" name="group_dealer" context="{'group_by': 'dealer_id'}"/>
+                        <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Start Date" name="group_start_date" context="{'group_by': 'start_date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Agreement Line Action -->
+        <record id="action_floor_plan_agreement_line" model="ir.actions.act_window">
+            <field name="name">Funding Lines</field>
+            <field name="res_model">floor.plan.agreement.line</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="search_view_id" ref="view_floor_plan_agreement_line_search"/>
+            <field name="context">{'search_default_funded': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a funding line
+                </p>
+                <p>
+                    Funding lines represent individual vehicle financing within an agreement.
+                    Each line tracks principal, interest, and repayments for a specific vehicle.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

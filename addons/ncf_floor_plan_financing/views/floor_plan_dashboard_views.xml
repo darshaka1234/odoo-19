@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Dashboard Action (using pivot/graph views from transaction) -->
+        <record id="action_floor_plan_dashboard" model="ir.actions.act_window">
+            <field name="name">Dashboard</field>
+            <field name="res_model">floor.plan.transaction</field>
+            <field name="view_mode">graph,pivot</field>
+            <field name="context">{
+                'search_default_this_month': 1,
+                'search_default_posted': 1
+            }</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_empty_folder">
+                    No transaction data to display
+                </p>
+                <p>
+                    The dashboard will show transaction analysis once you have active funding lines.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

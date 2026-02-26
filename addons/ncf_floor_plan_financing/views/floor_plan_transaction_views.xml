@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Transaction Tree View -->
+        <record id="view_floor_plan_transaction_tree" model="ir.ui.view">
+            <field name="name">floor.plan.transaction.tree</field>
+            <field name="model">floor.plan.transaction</field>
+            <field name="arch" type="xml">
+                <tree string="Transactions" decoration-success="state=='posted'" create="false">
+                    <field name="name"/>
+                    <field name="transaction_date"/>
+                    <field name="transaction_type"/>
+                    <field name="agreement_id"/>
+                    <field name="investor_id"/>
+                    <field name="dealer_id"/>
+                    <field name="amount" widget="monetary" sum="Total Amount"/>
+                    <field name="state" widget="badge" decoration-success="state=='posted'"/>
+                    <button name="action_view_journal_entry" string="Journal Entry" type="object" icon="fa-book" attrs="{'invisible': [('move_id', '=', False)]}"/>
+                    <field name="currency_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Transaction Form View -->
+        <record id="view_floor_plan_transaction_form" model="ir.ui.view">
+            <field name="name">floor.plan.transaction.form</field>
+            <field name="model">floor.plan.transaction</field>
+            <field name="arch" type="xml">
+                <form string="Transaction" create="false" edit="false">
+                    <header>
+                        <button name="action_view_journal_entry" string="View Journal Entry" type="object" class="btn-primary" attrs="{'invisible': [('move_id', '=', False)]}"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group string="Transaction Details">
+                                <field name="transaction_type"/>
+                                <field name="transaction_date"/>
+                                <field name="amount" widget="monetary"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                            <group string="Related Records">
+                                <field name="agreement_line_id"/>
+                                <field name="agreement_id"/>
+                                <field name="investor_id"/>
+                                <field name="dealer_id"/>
+                                <field name="move_id"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        
+                        <group string="Notes">
+                            <field name="notes" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Transaction Pivot View -->
+        <record id="view_floor_plan_transaction_pivot" model="ir.ui.view">
+            <field name="name">floor.plan.transaction.pivot</field>
+            <field name="model">floor.plan.transaction</field>
+            <field name="arch" type="xml">
+                <pivot string="Transaction Analysis">
+                    <field name="transaction_date" type="row" interval="month"/>
+                    <field name="transaction_type" type="col"/>
+                    <field name="amount" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        
+        <!-- Transaction Graph View -->
+        <record id="view_floor_plan_transaction_graph" model="ir.ui.view">
+            <field name="name">floor.plan.transaction.graph</field>
+            <field name="model">floor.plan.transaction</field>
+            <field name="arch" type="xml">
+                <graph string="Transaction Analysis" type="bar">
+                    <field name="transaction_date" interval="month"/>
+                    <field name="amount" type="measure"/>
+                </graph>
+            </field>
+        </record>
+        
+        <!-- Transaction Search View -->
+        <record id="view_floor_plan_transaction_search" model="ir.ui.view">
+            <field name="name">floor.plan.transaction.search</field>
+            <field name="model">floor.plan.transaction</field>
+            <field name="arch" type="xml">
+                <search string="Search Transactions">
+                    <field name="name"/>
+                    <field name="agreement_id"/>
+                    <field name="investor_id"/>
+                    <field name="dealer_id"/>
+                    <field name="transaction_type"/>
+                    
+                    <filter string="Investor Investment" name="investor_invest" domain="[('transaction_type', '=', 'investor_invest')]"/>
+                    <filter string="Transfer to Dealer" name="transfer_to_dealer" domain="[('transaction_type', '=', 'transfer_to_dealer')]"/>
+                    <filter string="Interest Calculated" name="interest_calculated" domain="[('transaction_type', '=', 'interest_calculated')]"/>
+                    <filter string="Dealer Interest Payment" name="dealer_interest_payment" domain="[('transaction_type', '=', 'dealer_interest_payment')]"/>
+                    <filter string="Investor Interest Payout" name="investor_interest_payout" domain="[('transaction_type', '=', 'investor_interest_payout')]"/>
+                    <filter string="Principal Repayment" name="principal_repayment" domain="[('transaction_type', '=', 'principal_repayment')]"/>
+                    <filter string="Commission Transfer" name="commission_transfer" domain="[('transaction_type', '=', 'commission_transfer')]"/>
+                    
+                    <separator/>
+                    <filter string="Posted" name="posted" domain="[('state', '=', 'posted')]"/>
+                    <filter string="This Month" name="this_month" 
+                            domain="[('transaction_date', '&gt;=', (context_today() - relativedelta(day=1)).strftime('%Y-%m-%d')), ('transaction_date', '&lt;=', (context_today() + relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    
+                    <group expand="0" string="Group By">
+                        <filter string="Transaction Type" name="group_type" context="{'group_by': 'transaction_type'}"/>
+                        <filter string="Agreement" name="group_agreement" context="{'group_by': 'agreement_id'}"/>
+                        <filter string="Investor" name="group_investor" context="{'group_by': 'investor_id'}"/>
+                        <filter string="Dealer" name="group_dealer" context="{'group_by': 'dealer_id'}"/>
+                        <filter string="Date" name="group_date" context="{'group_by': 'transaction_date:month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Transaction Action -->
+        <record id="action_floor_plan_transaction" model="ir.actions.act_window">
+            <field name="name">Transactions</field>
+            <field name="res_model">floor.plan.transaction</field>
+            <field name="view_mode">tree,pivot,graph,form</field>
+            <field name="search_view_id" ref="view_floor_plan_transaction_search"/>
+            <field name="context">{'search_default_posted': 1, 'search_default_this_month': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No transactions yet
+                </p>
+                <p>
+                    Transactions are automatically created when operations are performed on funding lines.
+                    Each transaction creates corresponding accounting journal entries.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Main Menu -->
+        <menuitem id="menu_floor_plan_root"
+                  name="Floor Plan Financing"
+                  sequence="10"
+                  web_icon="ncf_floor_plan_financing,static/description/icon.png"
+                  groups="group_floor_plan_admin,group_floor_plan_manager"/>
+        
+        <!-- Dashboard -->
+        <menuitem id="menu_floor_plan_dashboard"
+                  name="Dashboard"
+                  parent="menu_floor_plan_root"
+                  action="action_floor_plan_dashboard"
+                  sequence="1"/>
+        
+        <!-- Operations Submenu -->
+        <menuitem id="menu_floor_plan_operations"
+                  name="Operations"
+                  parent="menu_floor_plan_root"
+                  sequence="10"/>
+        
+        <menuitem id="menu_floor_plan_agreements"
+                  name="Agreements"
+                  parent="menu_floor_plan_operations"
+                  action="action_floor_plan_agreement"
+                  sequence="1"/>
+        
+        <menuitem id="menu_floor_plan_funding_lines"
+                  name="Funding Lines"
+                  parent="menu_floor_plan_operations"
+                  action="action_floor_plan_agreement_line"
+                  sequence="2"/>
+        
+        <menuitem id="menu_floor_plan_vehicles"
+                  name="Vehicles"
+                  parent="menu_floor_plan_operations"
+                  action="action_floor_plan_vehicles"
+                  sequence="3"/>
+        
+        <menuitem id="menu_floor_plan_transactions"
+                  name="Transactions"
+                  parent="menu_floor_plan_operations"
+                  action="action_floor_plan_transaction"
+                  sequence="4"/>
+        
+        <!-- Partners Submenu -->
+        <menuitem id="menu_floor_plan_partners"
+                  name="Partners"
+                  parent="menu_floor_plan_root"
+                  sequence="20"/>
+        
+        <menuitem id="menu_floor_plan_investors"
+                  name="Investors"
+                  parent="menu_floor_plan_partners"
+                  action="base.action_partner_form"
+                  sequence="1"/>
+        
+        <menuitem id="menu_floor_plan_dealers"
+                  name="Dealers"
+                  parent="menu_floor_plan_partners"
+                  action="base.action_partner_form"
+                  sequence="2"/>
+        
+        <!-- Reports Submenu -->
+        <menuitem id="menu_floor_plan_reports"
+                  name="Reports"
+                  parent="menu_floor_plan_root"
+                  sequence="30"/>
+        
+        <menuitem id="menu_floor_plan_transaction_analysis"
+                  name="Transaction Analysis"
+                  parent="menu_floor_plan_reports"
+                  action="action_floor_plan_transaction"
+                  sequence="1"/>
+        
+        <!-- Configuration Submenu -->
+        <menuitem id="menu_floor_plan_configuration"
+                  name="Configuration"
+                  parent="menu_floor_plan_root"
+                  sequence="99"
+                  groups="group_floor_plan_admin"/>
+        
+    </data>
+</odoo>

@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_floor_plan_agreement_admin,floor.plan.agreement.admin,model_floor_plan_agreement,group_floor_plan_admin,1,1,1,1
+access_floor_plan_agreement_manager,floor.plan.agreement.manager,model_floor_plan_agreement,group_floor_plan_manager,1,1,1,0
+access_floor_plan_agreement_line_admin,floor.plan.agreement.line.admin,model_floor_plan_agreement_line,group_floor_plan_admin,1,1,1,1
+access_floor_plan_agreement_line_manager,floor.plan.agreement.line.manager,model_floor_plan_agreement_line,group_floor_plan_manager,1,1,1,0
+access_floor_plan_transaction_admin,floor.plan.transaction.admin,model_floor_plan_transaction,group_floor_plan_admin,1,1,1,1
+access_floor_plan_transaction_manager,floor.plan.transaction.manager,model_floor_plan_transaction,group_floor_plan_manager,1,0,0,0

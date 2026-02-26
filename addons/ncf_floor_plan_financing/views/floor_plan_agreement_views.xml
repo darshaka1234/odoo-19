@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Agreement Tree View -->
+        <record id="view_floor_plan_agreement_tree" model="ir.ui.view">
+            <field name="name">floor.plan.agreement.tree</field>
+            <field name="model">floor.plan.agreement</field>
+            <field name="arch" type="xml">
+                <tree string="Floor Plan Agreements" decoration-info="state=='draft'" decoration-success="state=='active'" decoration-muted="state in ['closed', 'cancelled']">
+                    <field name="name"/>
+                    <field name="investor_id"/>
+                    <field name="date_created"/>
+                    <field name="state" widget="badge" decoration-info="state=='draft'" decoration-success="state=='active'" decoration-muted="state in ['closed', 'cancelled']"/>
+                    <field name="lines_count"/>
+                    <field name="total_funded" widget="monetary" sum="Total Funded"/>
+                    <field name="total_outstanding" widget="monetary" sum="Total Outstanding"/>
+                    <field name="total_interest_earned" widget="monetary" sum="Total Interest"/>
+                    <field name="currency_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Agreement Form View -->
+        <record id="view_floor_plan_agreement_form" model="ir.ui.view">
+            <field name="name">floor.plan.agreement.form</field>
+            <field name="model">floor.plan.agreement</field>
+            <field name="arch" type="xml">
+                <form string="Floor Plan Agreement">
+                    <header>
+                        <button name="action_submit" string="Submit" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <button name="action_approve" string="Approve" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'submitted')]}" groups="ncf_floor_plan_financing.group_floor_plan_manager,ncf_floor_plan_financing.group_floor_plan_admin"/>
+                        <button name="action_set_to_draft" string="Reset to Draft" type="object" attrs="{'invisible': [('state', '!=', 'submitted')]}"/>
+                        <button name="action_cancel" string="Cancel" type="object" attrs="{'invisible': [('state', 'in', ['active', 'closed', 'cancelled'])]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,active,closed"/>
+                    </header>
+                    
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_lines" type="object" class="oe_stat_button" icon="fa-list">
+                                <field name="lines_count" widget="statinfo" string="Lines"/>
+                            </button>
+                            <button name="action_view_transactions" type="object" class="oe_stat_button" icon="fa-exchange">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text">Transactions</span>
+                                </div>
+                            </button>
+                        </div>
+                        
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group string="Agreement Details">
+                                <field name="investor_id" options="{'no_create': True}"/>
+                                <field name="date_created"/>
+                                <field name="date_submitted" attrs="{'invisible': [('date_submitted', '=', False)]}"/>
+                                <field name="date_approved" attrs="{'invisible': [('date_approved', '=', False)]}"/>
+                            </group>
+                            <group string="Financial Settings">
+                                <field name="default_interest_rate" widget="percentage"/>
+                                <field name="commission_rate" widget="percentage"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        
+                        <group>
+                            <group string="Totals">
+                                <field name="total_funded" widget="monetary"/>
+                                <field name="total_outstanding" widget="monetary"/>
+                            </group>
+                            <group>
+                                <field name="total_repaid" widget="monetary"/>
+                                <field name="total_interest_earned" widget="monetary"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Funding Lines">
+                                <field name="agreement_line_ids" context="{'default_agreement_id': active_id, 'default_interest_rate': default_interest_rate}">
+                                    <tree decoration-info="state=='draft'" decoration-success="state=='funded'" decoration-warning="state=='partial'">
+                                        <field name="vehicle_id"/>
+                                        <field name="vin"/>
+                                        <field name="dealer_id"/>
+                                        <field name="funded_amount" widget="monetary" sum="Total Funded"/>
+                                        <field name="principal_remaining" widget="monetary" sum="Total Outstanding"/>
+                                        <field name="interest_rate"/>
+                                        <field name="interest_earned" widget="monetary" sum="Total Interest"/>
+                                        <field name="state" widget="badge"/>
+                                        <field name="start_date"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            
+                            <page string="Notes">
+                                <field name="notes" placeholder="Additional notes or comments..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Agreement Search View -->
+        <record id="view_floor_plan_agreement_search" model="ir.ui.view">
+            <field name="name">floor.plan.agreement.search</field>
+            <field name="model">floor.plan.agreement</field>
+            <field name="arch" type="xml">
+                <search string="Search Agreements">
+                    <field name="name"/>
+                    <field name="investor_id"/>
+                    <field name="date_created"/>
+                    
+                    <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Submitted" name="submitted" domain="[('state', '=', 'submitted')]"/>
+                    <filter string="Active" name="active" domain="[('state', '=', 'active')]"/>
+                    <filter string="Closed" name="closed" domain="[('state', '=', 'closed')]"/>
+                    
+                    <separator/>
+                    <filter string="Created This Month" name="this_month" 
+                            domain="[('date_created', '&gt;=', (context_today() - relativedelta(day=1)).strftime('%Y-%m-%d')), ('date_created', '&lt;=', (context_today() + relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    
+                    <group expand="0" string="Group By">
+                        <filter string="Investor" name="group_investor" context="{'group_by': 'investor_id'}"/>
+                        <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Created Date" name="group_date_created" context="{'group_by': 'date_created'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Agreement Action -->
+        <record id="action_floor_plan_agreement" model="ir.actions.act_window">
+            <field name="name">Agreements</field>
+            <field name="res_model">floor.plan.agreement</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_floor_plan_agreement_search"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first floor plan agreement
+                </p>
+                <p>
+                    Agreements group multiple vehicle funding lines for a single investor.
+                    Set the default interest rate and commission structure at the agreement level.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

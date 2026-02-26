@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Dealer Payment Wizard Form -->
+        <record id="view_wizard_dealer_payment_form" model="ir.ui.view">
+            <field name="name">wizard.dealer.payment.form</field>
+            <field name="model">wizard.dealer.payment</field>
+            <field name="arch" type="xml">
+                <form string="Dealer Payment">
+                    <group>
+                        <group string="Payment Details">
+                            <field name="agreement_line_id" readonly="1"/>
+                            <field name="payment_type" widget="radio"/>
+                            <field name="amount" widget="monetary"/>
+                            <field name="payment_date"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Outstanding Balances">
+                            <field name="outstanding_interest" widget="monetary"/>
+                            <field name="principal_remaining" widget="monetary"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <field name="notes" placeholder="Payment notes or reference..."/>
+                    </group>
+                    
+                    <footer>
+                        <button name="action_process_payment" string="Process Payment" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Dealer Payment Action -->
+        <record id="action_wizard_dealer_payment" model="ir.actions.act_window">
+            <field name="name">Dealer Payment</field>
+            <field name="res_model">wizard.dealer.payment</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_floor_plan_agreement_line"/>
+            <field name="binding_view_types">form</field>
+        </record>
+        
+    </data>
+</odoo>

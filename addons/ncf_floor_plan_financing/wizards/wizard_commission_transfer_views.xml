@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Commission Transfer Wizard Form -->
+        <record id="view_wizard_commission_transfer_form" model="ir.ui.view">
+            <field name="name">wizard.commission.transfer.form</field>
+            <field name="model">wizard.commission.transfer</field>
+            <field name="arch" type="xml">
+                <form string="Transfer Commission to Platform">
+                    <group>
+                        <group string="Commission Summary">
+                            <field name="total_interest_earned" widget="monetary" readonly="1"/>
+                            <field name="total_commission_earned" widget="monetary" readonly="1"/>
+                            <field name="accumulated_commission" widget="monetary" readonly="1" class="oe_subtotal_footer_separator"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Transfer Details">
+                            <field name="transfer_amount" widget="monetary"/>
+                            <field name="transfer_date"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <field name="notes" placeholder="Transfer notes or reference..."/>
+                    </group>
+                    
+                    <footer>
+                        <button name="action_transfer_commission" string="Transfer to Platform Bank" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Commission Transfer Action -->
+        <record id="action_wizard_commission_transfer" model="ir.actions.act_window">
+            <field name="name">Transfer Commission</field>
+            <field name="res_model">wizard.commission.transfer</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        
+        <!-- Menu Item for Commission Transfer -->
+        <menuitem id="menu_wizard_commission_transfer"
+                  name="Transfer Commission"
+                  parent="menu_floor_plan_operations"
+                  action="action_wizard_commission_transfer"
+                  sequence="11"
+                  groups="group_floor_plan_admin"/>
+        
+    </data>
+</odoo>

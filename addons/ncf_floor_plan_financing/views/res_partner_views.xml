@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Partner Form View: Add Floor Plan Tab -->
+        <record id="view_partner_form_floor_plan" model="ir.ui.view">
+            <field name="name">res.partner.form.floor.plan</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Floor Plan" attrs="{'invisible': [('is_floor_plan_investor', '=', False), ('is_floor_plan_dealer', '=', False)]}">
+                        <group>
+                            <group string="Floor Plan Settings">
+                                <field name="is_floor_plan_investor"/>
+                                <field name="is_floor_plan_dealer"/>
+                            </group>
+                        </group>
+                        
+                        <!-- Investor Information -->
+                        <group string="Investor Information" attrs="{'invisible': [('is_floor_plan_investor', '=', False)]}">
+                            <group>
+                                <field name="investor_total_invested" widget="monetary"/>
+                                <field name="investor_total_outstanding" widget="monetary"/>
+                            </group>
+                            <group>
+                                <field name="investor_total_interest_earned" widget="monetary"/>
+                                <field name="investor_agreements_count"/>
+                            </group>
+                        </group>
+                        
+                        <!-- Dealer Information -->
+                        <group string="Dealer Information" attrs="{'invisible': [('is_floor_plan_dealer', '=', False)]}">
+                            <group>
+                                <field name="dealer_total_borrowed" widget="monetary"/>
+                                <field name="dealer_total_owed" widget="monetary"/>
+                            </group>
+                            <group>
+                                <field name="dealer_total_repaid" widget="monetary"/>
+                                <field name="dealer_funding_lines_count"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Partner Tree View: Add Floor Plan Columns -->
+        <record id="view_partner_tree_floor_plan" model="ir.ui.view">
+            <field name="name">res.partner.tree.floor.plan</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='display_name']" position="after">
+                    <field name="is_floor_plan_investor" optional="hide"/>
+                    <field name="is_floor_plan_dealer" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Smart Buttons -->
+        <record id="view_partner_form_floor_plan_buttons" model="ir.ui.view">
+            <field name="name">res.partner.form.floor.plan.buttons</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <!-- Investor Smart Button -->
+                    <button name="action_view_investor_agreements" 
+                            type="object" 
+                            class="oe_stat_button" 
+                            icon="fa-file-text-o"
+                            attrs="{'invisible': [('is_floor_plan_investor', '=', False)]}">
+                        <field name="investor_agreements_count" widget="statinfo" string="Agreements"/>
+                    </button>
+                    
+                    <!-- Dealer Smart Button -->
+                    <button name="action_view_dealer_funding_lines" 
+                            type="object" 
+                            class="oe_stat_button" 
+                            icon="fa-money"
+                            attrs="{'invisible': [('is_floor_plan_dealer', '=', False)]}">
+                        <field name="dealer_funding_lines_count" widget="statinfo" string="Funding Lines"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+        
+    </data>
+</odoo>
